@@ -30,3 +30,5 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 ENV PATH="/app/.venv/bin:$PATH"
 
 CMD ["mcp-server-snowflake", "--service-config-file", "/app/services/tools_config.yaml", "--transport", "streamable-http"]
+
+#CMD ["mcp-server-snowflake", "--service-config-file", "/app/services/tools_config.yaml", "--transport", "streamable-http", "--endpoint", "/snowflake"]

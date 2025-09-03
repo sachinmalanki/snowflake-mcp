@@ -73,11 +73,15 @@ class SnowflakeService:
         Transport for the MCP server
     connection_params : dict
         Connection parameters for Snowflake connector
+    endpoint : str, default="/mcp"
+        Custom endpoint path for HTTP transports        
 
     Attributes
     ----------
     service_config_file : str
         Path to configuration file
+    endpoint : str
+        Custom endpoint path for HTTP transports        
     transport : Literal["stdio", "sse", "streamable-http"]
         Transport for the MCP server
     search_services : list
@@ -99,11 +103,13 @@ class SnowflakeService:
         service_config_file: str,
         transport: str,
         connection_params: dict,
+        endpoint: str = "/mcp"
     ):
         self.service_config_file = str(Path(service_config_file).expanduser().resolve())
         self.config_path_uri = Path(self.service_config_file).as_uri()
         self.transport = cast(Literal["stdio", "sse", "streamable-http"], transport)
         self.connection_params = connection_params
+        self.endpoint = endpoint
         self.search_services = []
         self.analyst_services = []
         self.agent_services = []
@@ -456,6 +462,12 @@ def parse_arguments():
         help="Transport for the MCP server",
         default="stdio",
     )
+    parser.add_argument(
+        "--endpoint",
+        required=False,
+        help="Endpoint path for the MCP server (default: /mcp)",
+        default="/mcp",
+    )
 
     return parser.parse_args()
 
@@ -480,6 +492,8 @@ def create_lifespan(args):
         service_config_file = get_var(
             "service_config_file", "SERVICE_CONFIG_FILE", args
         )
+        
+        endpoint = os.environ.get("MCP_ENDPOINT", args.endpoint)
 
         snowflake_service = None
         try:
@@ -487,6 +501,8 @@ def create_lifespan(args):
                 service_config_file=service_config_file,
                 transport=args.transport,
                 connection_params=connection_params,
+                endpoint=endpoint or args.endpoint,
+
             )
 
             # Initialize tools and resources now that we have the service
@@ -579,8 +595,9 @@ def main():
             "sse",
             "streamable-http",
         ]:
+            endpoint = os.environ.get("MCP_ENDPOINT", args.endpoint)
             logger.info(f"Starting server with transport: {args.transport}")
-            server.run(transport=args.transport, host="0.0.0.0", port=9000)
+            server.run(transport=args.transport, host="0.0.0.0", port=9000, path=endpoint)
         else:
             logger.info(f"Starting server with transport: {args.transport or 'stdio'}")
             server.run(transport=args.transport or "stdio")

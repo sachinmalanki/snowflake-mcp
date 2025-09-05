@@ -73,7 +73,7 @@ class SnowflakeService:
         Transport for the MCP server
     connection_params : dict
         Connection parameters for Snowflake connector
-    endpoint : str, default="/mcp"
+    endpoint : str, default="/snowflake-mcp"
         Custom endpoint path for HTTP transports        
 
     Attributes
@@ -103,7 +103,7 @@ class SnowflakeService:
         service_config_file: str,
         transport: str,
         connection_params: dict,
-        endpoint: str = "/mcp"
+        endpoint: str = "/snowflake-mcp"
     ):
         self.service_config_file = str(Path(service_config_file).expanduser().resolve())
         self.config_path_uri = Path(self.service_config_file).as_uri()
@@ -465,8 +465,8 @@ def parse_arguments():
     parser.add_argument(
         "--endpoint",
         required=False,
-        help="Endpoint path for the MCP server (default: /mcp)",
-        default="/mcp",
+        help="Endpoint path for the MCP server (default: /snowflake-mcp)",
+        default="/snowflake-mcp",
     )
 
     return parser.parse_args()
@@ -493,7 +493,7 @@ def create_lifespan(args):
             "service_config_file", "SERVICE_CONFIG_FILE", args
         )
         
-        endpoint = os.environ.get("MCP_ENDPOINT", args.endpoint)
+        endpoint = os.environ.get("SNOWFLAKE_MCP_ENDPOINT", args.endpoint)
 
         snowflake_service = None
         try:
@@ -595,7 +595,7 @@ def main():
             "sse",
             "streamable-http",
         ]:
-            endpoint = os.environ.get("MCP_ENDPOINT", args.endpoint)
+            endpoint = os.environ.get("SNOWFLAKE_MCP_ENDPOINT", args.endpoint)
             logger.info(f"Starting server with transport: {args.transport}")
             server.run(transport=args.transport, host="0.0.0.0", port=9000, path=endpoint)
         else:

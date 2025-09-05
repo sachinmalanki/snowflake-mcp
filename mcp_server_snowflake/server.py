@@ -502,7 +502,6 @@ def create_lifespan(args):
                 transport=args.transport,
                 connection_params=connection_params,
                 endpoint=endpoint or args.endpoint,
-
             )
 
             # Initialize tools and resources now that we have the service

@@ -73,7 +73,7 @@ class SnowflakeService:
         Transport for the MCP server
     connection_params : dict
         Connection parameters for Snowflake connector
-    endpoint : str, default="/snowflake-mcp"
+    endpoint : str, default="/mcp"
         Custom endpoint path for HTTP transports        
 
     Attributes

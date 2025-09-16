@@ -466,7 +466,7 @@ def parse_arguments():
         "--endpoint",
         required=False,
         help="Endpoint path for the MCP server (default: /snowflake-mcp)",
-        default="/snowflake-mcp",
+        default="/mcp",
     )
 
     return parser.parse_args()

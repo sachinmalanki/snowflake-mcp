@@ -103,7 +103,7 @@ class SnowflakeService:
         service_config_file: str,
         transport: str,
         connection_params: dict,
-        endpoint: str = "/snowflake-mcp"
+        endpoint: str = "/mcp"
     ):
         self.service_config_file = str(Path(service_config_file).expanduser().resolve())
         self.config_path_uri = Path(self.service_config_file).as_uri()
